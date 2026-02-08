@@ -34,7 +34,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 
 	// Kotlin
@@ -43,10 +42,10 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 	// Database
-	runtimeOnly("com.mysql:mysql-connector-j")
+	runtimeOnly("com.h2database:h2")
+	// runtimeOnly("com.mysql:mysql-connector-j")
 
-	// Redis
-	implementation("io.lettuce:lettuce-core")
+
 
 	// Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

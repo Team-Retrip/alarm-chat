@@ -1,6 +1,6 @@
 package com.retrip.alarm.infra.config
 
-import com.retrip.alarm.application.in.usecase.AlarmUseCase
+import com.retrip.alarm.application.`in`.usecase.AlarmUseCase
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled

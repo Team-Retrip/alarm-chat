@@ -1,4 +1,4 @@
-package com.retrip.alarm.application.in.usecase
+package com.retrip.alarm.application.`in`.usecase
 
 import com.retrip.alarm.domain.entity.Alarm
 import com.retrip.alarm.domain.vo.AlarmType

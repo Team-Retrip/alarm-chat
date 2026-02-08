@@ -1,10 +1,10 @@
-package com.retrip.alarm.infra.adapter.in.presentation.rest
+package com.retrip.alarm.infra.adapter.`in`.presentation.rest
 
-import com.retrip.alarm.application.in.request.CreateAlarmRequest
-import com.retrip.alarm.application.in.response.AlarmResponse
-import com.retrip.alarm.application.in.response.UnreadCountResponse
-import com.retrip.alarm.application.in.usecase.AlarmUseCase
-import com.retrip.alarm.infra.adapter.in.presentation.rest.common.ApiResponse
+import com.retrip.alarm.application.`in`.request.CreateAlarmRequest
+import com.retrip.alarm.application.`in`.response.AlarmResponse
+import com.retrip.alarm.application.`in`.response.UnreadCountResponse
+import com.retrip.alarm.application.`in`.usecase.AlarmUseCase
+import com.retrip.alarm.infra.adapter.`in`.presentation.rest.common.ApiResponse
 import org.springframework.web.bind.annotation.*
 
 @RestController

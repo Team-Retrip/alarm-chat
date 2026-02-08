@@ -1,4 +1,4 @@
-package com.retrip.alarm.infra.adapter.in.presentation.rest.common
+package com.retrip.alarm.infra.adapter.`in`.presentation.rest.common
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.retrip.alarm.domain.exception.common.ErrorCode

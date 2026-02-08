@@ -1,4 +1,4 @@
-package com.retrip.alarm.application.in.request
+package com.retrip.alarm.application.`in`.request
 
 import com.retrip.alarm.domain.vo.AlarmType
 

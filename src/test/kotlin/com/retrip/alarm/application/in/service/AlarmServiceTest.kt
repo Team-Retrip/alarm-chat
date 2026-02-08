@@ -1,4 +1,4 @@
-package com.retrip.alarm.application.in.service
+package com.retrip.alarm.application.`in`.service
 
 import com.retrip.alarm.application.out.external.PushService
 import com.retrip.alarm.application.out.repository.AlarmRepository
