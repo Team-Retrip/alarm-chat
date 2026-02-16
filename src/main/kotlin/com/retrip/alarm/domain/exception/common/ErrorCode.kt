@@ -17,4 +17,10 @@ enum class ErrorCode(
 
     // Alarm
     ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "Alarm-001", "Alarm not found"),
+    ALARM_CAN_NOT_RECIPIENT(HttpStatus.NOT_FOUND, "Alarm-002", "Alarm Can Not Recipe"),
+
+    // Alarm Member
+    ALARM_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "Alarm-Member-001", "Alarm Member not found"),
+
+
 }

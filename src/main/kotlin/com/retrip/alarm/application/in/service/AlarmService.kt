@@ -1,89 +1,86 @@
 package com.retrip.alarm.application.`in`.service
 
+import com.retrip.alarm.application.`in`.request.CreateAlarmRequest
+import com.retrip.alarm.application.`in`.response.AlarmResponse
+import com.retrip.alarm.application.`in`.response.CreateAlarmsResponse
 import com.retrip.alarm.application.`in`.usecase.AlarmUseCase
-import com.retrip.alarm.application.out.external.PushService
+import com.retrip.alarm.application.out.external.PushPort
+import com.retrip.alarm.application.out.repository.AlarmMemberRepository
+import com.retrip.alarm.application.out.repository.AlarmQueryRepository
 import com.retrip.alarm.application.out.repository.AlarmRepository
-import com.retrip.alarm.domain.entity.Alarm
-import com.retrip.alarm.domain.vo.AlarmType
+import com.retrip.alarm.application.out.request.PushRequest
 import com.retrip.alarm.domain.exception.common.BusinessException
 import com.retrip.alarm.domain.exception.common.ErrorCode
+import jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyle
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.util.*
+import kotlin.toString
 
 @Service
 @Transactional
 class AlarmService(
     private val alarmRepository: AlarmRepository,
-    private val pushService: PushService
+    private val alarmQueryRepository: AlarmQueryRepository,
+    private val alarmMemberRepository: AlarmMemberRepository,
+    private val pushPort: PushPort
 ) : AlarmUseCase {
 
-    override fun createAlarm(
-        recipientId: Long,
-        senderId: Long?,
-        senderName: String?,
-        tripId: Long,
-        tripTitle: String,
-        type: AlarmType,
-        token: String?
-    ): Alarm {
-        
+    override fun createAlarm(request: CreateAlarmRequest): CreateAlarmsResponse {
         // 1. Generate Message from Template
-        val title = type.createTitle()
-        val body = type.createBody(senderName, tripTitle)
+        val title = request.type.createTitle()
+        val body = request.type.createBody(request.parameters)
 
         // 2. Save Alarm to DB
-        val alarm = Alarm(
-            recipientId = recipientId,
-            senderId = senderId,
-            tripId = tripId,
-            title = title,
-            body = body,
-            type = type
-        )
-        val savedAlarm = alarmRepository.save(alarm)
+        val alarmAndAlarmMembers = request.receiverIds.map {
+            alarmRepository.save(
+                request.toAlarm(
+                    title,
+                    body,
+                    it
+                )
+            ) to alarmMemberRepository.findById(it).orElseThrow { BusinessException(ErrorCode.ALARM_MEMBER_NOT_FOUND) }
+        }
 
-        // 3. Send Push Notification
-        if (token != null) {
-            pushService.sendPush(
-                token = token,
+        val pushRequests = alarmAndAlarmMembers.map { (alarm, member) ->
+            PushRequest(
+                token = member.fcmToken,
                 title = title,
                 body = body,
                 data = mapOf(
-                    "alarmId" to savedAlarm.id.toString(),
-                    "type" to type.name,
-                    "tripId" to tripId.toString()
+                    "alarmId" to alarm.id.toString(),
+                    "type" to alarm.type.name,
                 )
             )
         }
-        
-        return savedAlarm
+        pushPort.sendPush(pushRequests)
+
+        return CreateAlarmsResponse.from(alarmAndAlarmMembers.map { it.first })
     }
 
     @Transactional(readOnly = true)
-    override fun getAlarms(recipientId: Long, page: Int, size: Int): List<Alarm> {
-        return alarmRepository.findAllByRecipientId(recipientId, page, size)
+    override fun getAlarms(receiverId: UUID, page: Pageable): Page<AlarmResponse> {
+        return alarmQueryRepository.findAlarmsByRecipientId(receiverId, page)
     }
 
     @Transactional(readOnly = true)
-    override fun getUnreadCount(recipientId: Long): Long {
-        return alarmRepository.countUnreadByRecipientId(recipientId)
+    override fun getUnreadCount(receiverId: UUID): Long {
+        return alarmQueryRepository.countAlarmCountByUnRead(receiverId)
     }
 
-    override fun readAlarm(alarmId: Long, recipientId: Long) {
-        val alarm = alarmRepository.findById(alarmId)
-            ?: throw BusinessException(ErrorCode.ALARM_NOT_FOUND)
-        
-        if (alarm.recipientId != recipientId) {
-             throw SecurityException("User \$recipientId is not the recipient of alarm \$alarmId")
+    override fun readAlarm(alarmId: UUID, receiverId: UUID) {
+        val alarm = alarmRepository.findById(alarmId).orElseThrow { throw BusinessException(ErrorCode.ALARM_NOT_FOUND) }
+        if (alarm.receiverId != receiverId) {
+            throw BusinessException(ErrorCode.ALARM_CAN_NOT_RECIPIENT)
         }
-
         alarm.read()
-        alarmRepository.save(alarm)
     }
 
-    override fun readAll(recipientId: Long) {
-        alarmRepository.markAllAsRead(recipientId)
+    override fun readAll(receiverId: UUID) {
+        alarmRepository.markAllAsRead(receiverId)
     }
 
     override fun deleteOldAlarms() {

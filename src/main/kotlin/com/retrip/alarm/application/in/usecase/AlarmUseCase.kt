@@ -1,22 +1,17 @@
 package com.retrip.alarm.application.`in`.usecase
 
-import com.retrip.alarm.domain.entity.Alarm
-import com.retrip.alarm.domain.vo.AlarmType
+import com.retrip.alarm.application.`in`.request.CreateAlarmRequest
+import com.retrip.alarm.application.`in`.response.AlarmResponse
+import com.retrip.alarm.application.`in`.response.CreateAlarmsResponse
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import java.util.UUID
 
 interface AlarmUseCase {
-    fun createAlarm(
-        recipientId: Long,
-        senderId: Long?,
-        senderName: String?,
-        tripId: Long,
-        tripTitle: String,
-        type: AlarmType,
-        token: String?
-    ): Alarm
-
-    fun getAlarms(recipientId: Long, page: Int, size: Int): List<Alarm>
-    fun getUnreadCount(recipientId: Long): Long
-    fun readAlarm(alarmId: Long, recipientId: Long)
-    fun readAll(recipientId: Long)
+    fun createAlarm(request: CreateAlarmRequest): CreateAlarmsResponse
+    fun getAlarms(receiverId: UUID, page: Pageable): Page<AlarmResponse>
+    fun getUnreadCount(receiverId: UUID): Long
+    fun readAlarm(alarmId: UUID, receiverId: UUID)
+    fun readAll(receiverId: UUID)
     fun deleteOldAlarms()
 }

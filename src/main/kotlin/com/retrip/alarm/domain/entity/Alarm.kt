@@ -1,23 +1,24 @@
 package com.retrip.alarm.domain.entity
 
-import jakarta.persistence.*
-import java.time.LocalDateTime
 import com.retrip.alarm.domain.vo.AlarmType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Id
+import java.util.UUID
 
 @Entity
 class Alarm(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
-
-    @Column(nullable = false)
-    val recipientId: Long, // 알림 받는 사람
+    @Column(columnDefinition = "varbinary(16)")
+    val id: UUID,
 
     @Column(nullable = true)
-    val senderId: Long? = null, // 알림 보낸 사람 (시스템 알림일 경우 null 가능)
+    val senderId: UUID? = null, // 알림 보낸 사람 (시스템 알림일 경우 null 가능)
 
-    @Column(nullable = false)
-    val tripId: Long, // 관련된 여행 ID
+    @Column
+    val receiverId: UUID, // 알림 받는 사람
 
     @Column(nullable = false)
     val title: String,

@@ -1,31 +1,23 @@
 package com.retrip.alarm.application.`in`.response
 
-import com.retrip.alarm.domain.entity.Alarm
 import com.retrip.alarm.domain.vo.AlarmType
+import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
+import java.util.*
 
+@Schema(description = "알림")
 data class AlarmResponse(
-    val id: Long,
-    val senderId: Long?,
-    val tripId: Long,
+    val id: UUID,
+    val senderId: UUID?,
+    val receiverId: UUID?,
     val title: String,
     val body: String,
+    @Schema(
+        description = "알림 타입", allowableValues = ["INVITATION", "TRIP_CHANGE", "TRIP_CONFIRM", "KICK", "DELETE"]
+    )
     val type: AlarmType,
     val isRead: Boolean,
     val createdAt: LocalDateTime
-) {
-    companion object {
-        fun from(alarm: Alarm): AlarmResponse {
-            return AlarmResponse(
-                id = alarm.id ?: 0,
-                senderId = alarm.senderId,
-                tripId = alarm.tripId,
-                title = alarm.title,
-                body = alarm.body,
-                type = alarm.type,
-                isRead = alarm.isRead,
-                createdAt = alarm.createdAt
-            )
-        }
-    }
-}
+)
+
+

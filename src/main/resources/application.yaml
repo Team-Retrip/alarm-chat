@@ -10,7 +10,6 @@ spring:
     #    url: jdbc:h2:tcp://localhost/~/trip;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MySQL
     username: sa
     password:
-
   jpa:
     properties:
       hibernate:
@@ -28,8 +27,8 @@ logging:
     org.springframework.web.client.RestTemplate: DEBUG
 
 springdoc:
-  swagger-ui:
-    use-root-path: true
-    enabled: true
   api-docs:
     enabled: true
+  swagger-ui:
+    use-root-path: true
+    query-config-enabled: false
