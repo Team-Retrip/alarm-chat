@@ -24,6 +24,7 @@ class AlarmMemberService(
 ) : AlarmMemberUseCase {
     override fun createAlarmMember(request: CreateAlarmMemberRequest): CreateAlarmMemberResponse {
         val alarmMember = request.toAlarmMember()
+        alarmMemberRepository.save(alarmMember)
         return CreateAlarmMemberResponse.from(alarmMember)
     }
 

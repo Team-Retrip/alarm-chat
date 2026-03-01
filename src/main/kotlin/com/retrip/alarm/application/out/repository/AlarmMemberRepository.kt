@@ -7,4 +7,5 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 interface AlarmMemberRepository: JpaRepository<AlarmMember, UUID> {
+    fun findByMemberId(memberId: UUID): AlarmMember?
 }

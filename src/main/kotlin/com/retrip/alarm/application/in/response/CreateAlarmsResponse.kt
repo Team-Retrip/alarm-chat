@@ -2,11 +2,9 @@ package com.retrip.alarm.application.`in`.response
 
 import com.retrip.alarm.domain.entity.Alarm
 import com.retrip.alarm.domain.vo.AlarmType
-import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 import java.util.*
 
-@Schema(description = "알림 생성 응답")
 data class CreateAlarmsResponse(
     val alarms: List<CreateAlarmResponse>?
 ) {

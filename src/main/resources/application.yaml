@@ -26,9 +26,5 @@ logging:
     org.hibernate.type.descriptor.sql: trace
     org.springframework.web.client.RestTemplate: DEBUG
 
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    use-root-path: true
-    query-config-enabled: false
+
+

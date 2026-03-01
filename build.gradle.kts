@@ -1,11 +1,14 @@
 import org.gradle.kotlin.dsl.annotationProcessor
 import org.gradle.kotlin.dsl.implementation
+import org.gradle.kotlin.dsl.testImplementation
 
 plugins {
     kotlin("jvm") version "2.3.0"
     kotlin("plugin.spring") version "2.3.0"
     kotlin("kapt") version "1.9.25" // 추가
+    kotlin("plugin.jpa") version "2.3.0"
 
+    id("org.asciidoctor.jvm.convert") version "4.0.2"
     id("org.springframework.boot") version "4.0.2"
     id("io.spring.dependency-management") version "1.1.7"
 }
@@ -19,7 +22,9 @@ java {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
-
+val asciidoctorExt = configurations.create("asciidoctorExt") {
+    extendsFrom(configurations["testImplementation"])
+}
 configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())
@@ -46,18 +51,11 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15"){
-        // QueryDSL과 Spring Data 연동 시 발생하는 클래스 로딩 문제를 차단하기 위해 제외
-        exclude(group = "org.querydsl")
-        exclude(group = "org.springframework.data", module = "spring-data-commons")
-    }
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.5") {
-        // QueryDSL과 Spring Data 연동 시 발생하는 클래스 로딩 문제를 차단하기 위해 제외
-        exclude(group = "org.querydsl")
-        exclude(group = "org.springframework.data", module = "spring-data-commons")
-    }
-        // Kotlin
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
@@ -96,4 +94,16 @@ sourceSets {
     val main by getting {
         java.srcDir("build/generated/source/kapt/main")
     }
+}
+val snippetsDir by tasks.registering {
+    val dir = file("build/generated-snippets")
+    outputs.dir(dir)
+}
+
+tasks.test {
+    outputs.dir(snippetsDir)
+}
+tasks.asciidoctor {
+    inputs.dir(snippetsDir)
+    dependsOn(tasks.test)
 }

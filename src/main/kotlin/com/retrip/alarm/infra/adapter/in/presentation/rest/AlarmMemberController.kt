@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("alarms/member")
+@RequestMapping("alarms-member")
 class AlarmMemberController(
     private val alarmMemberUseCase: AlarmMemberUseCase
 ) {

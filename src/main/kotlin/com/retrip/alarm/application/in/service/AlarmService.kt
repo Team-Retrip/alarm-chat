@@ -11,14 +11,12 @@ import com.retrip.alarm.application.out.repository.AlarmRepository
 import com.retrip.alarm.application.out.request.PushRequest
 import com.retrip.alarm.domain.exception.common.BusinessException
 import com.retrip.alarm.domain.exception.common.ErrorCode
-import jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyle
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.toString
 
 @Service
 @Transactional
@@ -35,14 +33,17 @@ class AlarmService(
         val body = request.type.createBody(request.parameters)
 
         // 2. Save Alarm to DB
-        val alarmAndAlarmMembers = request.receiverIds.map {
-            alarmRepository.save(
+        val alarmAndAlarmMembers = request.receiverIds.mapNotNull {
+            val alarmMember =
+                alarmMemberRepository.findByMemberId(it) ?: return@mapNotNull null
+            val alarm = alarmRepository.save(
                 request.toAlarm(
                     title,
                     body,
                     it
                 )
-            ) to alarmMemberRepository.findById(it).orElseThrow { BusinessException(ErrorCode.ALARM_MEMBER_NOT_FOUND) }
+            )
+            alarm to alarmMember
         }
 
         val pushRequests = alarmAndAlarmMembers.map { (alarm, member) ->
