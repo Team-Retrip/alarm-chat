@@ -10,6 +10,7 @@ import com.retrip.alarm.application.`in`.usecase.AlarmMemberUseCase
 import com.retrip.alarm.application.out.repository.AlarmMemberRepository
 import com.retrip.alarm.domain.exception.common.BusinessException
 import com.retrip.alarm.domain.exception.common.ErrorCode
+import com.retrip.alarm.application.`in`.request.context.UserContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -22,8 +23,8 @@ class AlarmMemberService(
     private val alarmMemberRepository: AlarmMemberRepository,
     private val alarmMemberQueryRepository: AlarmMemberQueryRepository,
 ) : AlarmMemberUseCase {
-    override fun createAlarmMember(request: CreateAlarmMemberRequest): CreateAlarmMemberResponse {
-        val alarmMember = request.toAlarmMember()
+    override fun createAlarmMember(context: UserContext, request: CreateAlarmMemberRequest): CreateAlarmMemberResponse {
+        val alarmMember = request.toAlarmMember(context.memberId)
         alarmMemberRepository.save(alarmMember)
         return CreateAlarmMemberResponse.from(alarmMember)
     }
@@ -33,10 +34,10 @@ class AlarmMemberService(
         return alarmMemberQueryRepository.findAlarmMembers(id, page)
     }
 
-    override fun updateAlarmMember(id: UUID, request: UpdateAlarmMemberRequest): UpdateAlarmMemberResponse {
+    override fun updateAlarmMember(id: UUID, context: UserContext, request: UpdateAlarmMemberRequest): UpdateAlarmMemberResponse {
         val alarmMember =
             alarmMemberRepository.findById(id).orElseThrow { BusinessException(ErrorCode.ALARM_NOT_FOUND) }
-        alarmMember.update(request.memberId, request.fcmToken)
+        alarmMember.update(context.memberId, request.fcmToken)
         return UpdateAlarmMemberResponse.from(alarmMember)
     }
 
