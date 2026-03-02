@@ -7,13 +7,15 @@ import com.retrip.alarm.application.`in`.response.CreateAlarmMemberResponse
 import com.retrip.alarm.application.`in`.response.UpdateAlarmMemberResponse
 import com.retrip.alarm.application.`in`.usecase.AlarmMemberUseCase
 import com.retrip.alarm.infra.adapter.`in`.presentation.rest.common.ApiResponse
+import com.retrip.alarm.application.`in`.request.context.UserContext
+import com.retrip.alarm.application.`in`.request.context.WithUserContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("alarms-member")
+@RequestMapping("alarm-member")
 class AlarmMemberController(
     private val alarmMemberUseCase: AlarmMemberUseCase
 ) {
@@ -25,22 +27,28 @@ class AlarmMemberController(
     }
 
     @PostMapping("")
-    fun addAlarmMember(@RequestBody request: CreateAlarmMemberRequest): ApiResponse<CreateAlarmMemberResponse> {
-        val response = alarmMemberUseCase.createAlarmMember(request)
+    fun addAlarmMember(
+        @WithUserContext context: UserContext,
+        @RequestBody request: CreateAlarmMemberRequest
+    ): ApiResponse<CreateAlarmMemberResponse> {
+        val response = alarmMemberUseCase.createAlarmMember(context, request)
         return ApiResponse.created(response)
     }
 
     @PutMapping("{id}")
     fun updateAlarmMember(
         @PathVariable("id") id: UUID,
+        @WithUserContext context: UserContext,
         @RequestBody request: UpdateAlarmMemberRequest
     ): ApiResponse<UpdateAlarmMemberResponse> {
-        val response = alarmMemberUseCase.updateAlarmMember(id, request)
+        val response = alarmMemberUseCase.updateAlarmMember(id, context, request)
         return ApiResponse.ok(response)
     }
 
     @DeleteMapping("{id}")
-    fun deleteAlarmMember(@PathVariable("id") id: UUID): ApiResponse<Unit> {
+    fun deleteAlarmMember(
+        @PathVariable("id") id: UUID
+    ): ApiResponse<Unit> {
         alarmMemberUseCase.deleteAlarmMember(id)
         return ApiResponse.noContent()
     }
