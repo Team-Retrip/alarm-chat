@@ -8,7 +8,7 @@ import java.util.UUID
 data class CreateAlarmRequest(
     val senderId: UUID?,
     val receiverIds: List<UUID>,
-    val parameters: List<String>?,
+    val parameters: Map<String, Any>?,
     val type: AlarmType
 ) {
     fun toAlarm(title: String, body: String, receiverId: UUID): Alarm {
