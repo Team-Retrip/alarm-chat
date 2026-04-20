@@ -6,12 +6,15 @@ import com.google.firebase.messaging.MulticastMessage
 import com.google.firebase.messaging.Notification
 import com.retrip.alarm.application.out.external.PushPort
 import com.retrip.alarm.application.out.request.PushRequest
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class FcmGateway(
     private val firebaseMessaging: FirebaseMessaging
 ) : PushPort {
+
+    private val log = LoggerFactory.getLogger(FcmGateway::class.java)
 
     override fun sendPush(pushRequests: List<PushRequest>) {
         try {
@@ -27,13 +30,11 @@ class FcmGateway(
                     .putAllData(it.data)
                     .build()
             }
-            firebaseMessaging.sendEachAsync(messages)
+            firebaseMessaging.sendEachAsync(messages).get()
         } catch (e: Exception) {
-            // Log error but don't stop execution
-            println("Failed to send FCM message: \${e.message}")
+            log.error("Failed to send FCM message: ${e.message}", e)
         }
     }
-
 
     override fun sendMulticast(tokens: List<String>, title: String, body: String, data: Map<String, String>) {
         if (tokens.isEmpty()) return
@@ -52,7 +53,7 @@ class FcmGateway(
 
             firebaseMessaging.sendEachForMulticast(message)
         } catch (e: Exception) {
-            println("Failed to send multicast FCM message: \${e.message}")
+            log.error("Failed to send multicast FCM message: ${e.message}", e)
         }
     }
 }

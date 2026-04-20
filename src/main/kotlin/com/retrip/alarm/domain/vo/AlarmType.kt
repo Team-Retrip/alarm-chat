@@ -16,14 +16,19 @@ enum class AlarmType(
     }
 
     fun createBody(parameters: Map<String, Any>?): String {
-        return when(this){
-            DEMAND -> this.bodyTemplate.replace("{senderName}",parameters?.getOrDefault("senderName", null) as? String ?: "Unknown",)
-            INVITATION -> this.bodyTemplate.replace("{senderName}",parameters?.getOrDefault("senderName", null) as? String ?: "Unknown")
-                .replace("{tripName}",parameters?.getOrDefault("senderName", null) as? String ?: "Unknown")
-            TRIP_CHANGE -> this.bodyTemplate.replace("{tripName}",parameters?.getOrDefault("senderName", null) as? String ?: "Unknown")
-            TRIP_CONFIRM -> this.bodyTemplate.replace("{tripName}",parameters?.getOrDefault("senderName", null) as? String ?: "Unknown")
-            KICK -> this.bodyTemplate.replace("{tripName}",parameters?.getOrDefault("senderName", null) as? String ?: "Unknown")
-            DELETE -> this.bodyTemplate.replace("{tripName}",parameters?.getOrDefault("senderName", null) as? String ?: "Unknown")
+        val senderName = parameters?.get("senderName") as? String ?: "Unknown"
+        val tripName = parameters?.get("tripName") as? String ?: "Unknown"
+        return when (this) {
+            DEMAND -> this.bodyTemplate
+                .replace("{senderName}", senderName)
+                .replace("{tripName}", tripName)
+            INVITATION -> this.bodyTemplate
+                .replace("{senderName}", senderName)
+                .replace("{tripName}", tripName)
+            TRIP_CHANGE -> this.bodyTemplate.replace("{tripName}", tripName)
+            TRIP_CONFIRM -> this.bodyTemplate.replace("{tripName}", tripName)
+            KICK -> this.bodyTemplate.replace("{tripName}", tripName)
+            DELETE -> this.bodyTemplate.replace("{tripName}", tripName)
         }
     }
 }

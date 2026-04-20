@@ -11,6 +11,7 @@ import com.retrip.alarm.application.`in`.request.context.UserContext
 import com.retrip.alarm.application.`in`.request.context.WithUserContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -21,9 +22,9 @@ class AlarmMemberController(
 ) {
 
     @GetMapping(value = ["{id}", ""])
-    fun getAlarmMember(@PathVariable("id", required = false) id: UUID?, page: Pageable): Page<AlarmMemberResponse> {
+    fun getAlarmMember(@PathVariable("id", required = false) id: UUID?, page: Pageable): ApiResponse<Page<AlarmMemberResponse>> {
         val response = alarmMemberUseCase.getAlarmMembers(id, page)
-        return response
+        return ApiResponse.ok(response)
     }
 
     @PostMapping("")

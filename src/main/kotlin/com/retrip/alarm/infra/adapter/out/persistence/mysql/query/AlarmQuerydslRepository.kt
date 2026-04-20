@@ -35,19 +35,18 @@ class AlarmQuerydslRepository(
             )
             .from(alarm)
             .where(recipientEq(recipientId))
+            .orderBy(alarm.createdAt.desc())
             .offset(page.offset)
-            .limit(page.pageSize.toLong())
+            .limit(page.pageSize.toLong() + 1)
             .fetch()
         return PageUtils.checkEndPage(page, alarms)
     }
 
     override fun countAlarmCountByUnRead(recipientId: UUID): Long {
         return query
-            .select(
-                alarm.isRead.count()
-            )
+            .select(alarm.count())
             .from(alarm)
-            .where(recipientEq(recipientId))
+            .where(recipientEq(recipientId)?.and(alarm.isRead.eq(false)))
             .fetchOne() ?: 0
     }
 

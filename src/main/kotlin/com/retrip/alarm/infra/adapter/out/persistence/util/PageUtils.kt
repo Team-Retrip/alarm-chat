@@ -5,9 +5,11 @@ import org.springframework.data.domain.Pageable
 
 object PageUtils {
     fun <T : Any> checkEndPage(pageable: Pageable, results: MutableList<T>): PageImpl<T> {
-        if (results.size > pageable.pageSize) {
+        val hasNext = results.size > pageable.pageSize
+        if (hasNext) {
             results.removeAt(pageable.pageSize)
         }
-        return PageImpl(results, pageable, results.size.toLong())
+        val total = pageable.offset + results.size + (if (hasNext) 1 else 0)
+        return PageImpl(results, pageable, total)
     }
 }
