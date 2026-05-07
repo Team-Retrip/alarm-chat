@@ -80,7 +80,7 @@ dependencies {
 	implementation("com.google.firebase:firebase-admin:9.2.0")
 
 	// Swagger (SpringDoc OpenAPI)
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
 }
 
 kotlin {

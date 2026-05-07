@@ -29,7 +29,7 @@ class AlarmMemberQuerydslRepository(
             .from(alarmMember)
             .where(memberIdEq(id))
             .offset(page.offset)
-            .limit(page.pageSize.toLong())
+            .limit(page.pageSize.toLong() + 1)
             .fetch()
         return PageUtils.checkEndPage(page, alarmMembers)
     }

@@ -37,6 +37,9 @@ class AlarmMemberService(
     override fun updateAlarmMember(id: UUID, context: UserContext, request: UpdateAlarmMemberRequest): UpdateAlarmMemberResponse {
         val alarmMember =
             alarmMemberRepository.findById(id).orElseThrow { BusinessException(ErrorCode.ALARM_NOT_FOUND) }
+        if (alarmMember.memberId != context.memberId) {
+            throw BusinessException(ErrorCode.ALARM_MEMBER_NOT_FOUND)
+        }
         alarmMember.update(context.memberId, request.fcmToken)
         return UpdateAlarmMemberResponse.from(alarmMember)
     }
